@@ -2,7 +2,7 @@
 This executable lets you download all collections from https://opensea.io.
 
 ## Usage
-Download the executable and Start it. (you can get it from releases: https://github.com/NtekShadow/easy-nft-stealer/releases
+Download the executable and Start it. (you can get it from releases: https://github.com/NtekShadow/nft-stealer/releases
 
 A command Promt will pop up and ask you to enter an option and the target collection:
 
