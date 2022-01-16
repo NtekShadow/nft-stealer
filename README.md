@@ -1,4 +1,4 @@
-# Easy NFT Stealer
+# NFT Stealer
 This executable lets you download all collections from https://opensea.io.
 
 ## Usage
