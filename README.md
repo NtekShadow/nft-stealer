@@ -17,12 +17,6 @@ after entering both of these valid just wait until the program finishes the down
 By using the Opensea API, setting a User-Agent and fetching the items in bunches of 50 and iterating through the bunches until all items are downloaded.
 And by using the coinbase api getting the current price of ETH in USD for a little fun statistics. (which is probably not accurate at all)
 
-The image fetching is base of this repo: https://github.com/sj-dan/OpenSea-NFT-Stealer
-
-## Why spend time making this?
-NFT's are a joke and I saw the repo of @https://github.com/sj-dan/ and decided to make it way more user-friendly and easy to use.
-This way more people can easily let the right-click go brrr without knowledge in Python or a working programming environment.
-
 ## Known Issues:
   if choosing to download HQ Images, no images are downloaded at all:
   
