@@ -29,6 +29,6 @@ This way more people can easily let the right-click go brrr without knowledge in
     
   Sometimes flagged by AntiVirus for bein a Trojan:
   
-  -This is due to pyinstaller bundleing into one file. I have submitted the file to Avast and AVG for checking but if its too insecure for you, you can run the python script directly
+  -This is due to pyinstaller bundleing into one file. I have submitted the file to Avast and AVG for checking. Once they agree that it doenst contain a trojan, try updating the virus definitions in your anti virus software and that should stop the false positive. if its too insecure for you, you can run the python script directly
     
   High possibility of this code breaking if Opensea API changes something with their api
