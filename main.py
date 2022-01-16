@@ -86,7 +86,7 @@ stats = {
 def nft_stealer_option(nft_option):
     if nft_option == 1:
         print(f"\n  Starting download of NFT collection {CollectionName} in normal Quality:\n")
-        for i in tqdm(range(iterations), ascii=True):
+        for i in tqdm(range(iterations)):
             offset = i * 50
             data = json.loads(requests.get(
                 f"https://api.opensea.io/api/v1/assets?order_direction=asc&offset={offset}"
@@ -95,7 +95,7 @@ def nft_stealer_option(nft_option):
 
     elif nft_option == 3:
         print(f"\n  Starting download of NFT collection {CollectionName} in High Quality:\n")
-        for i in tqdm(range(iterations), ascii=True):
+        for i in tqdm(range(iterations)):
             offset = i * 50
             data = json.loads(requests.get(
                 f"https://api.opensea.io/api/v1/assets?order_direction=asc&offset={offset}"
@@ -104,7 +104,7 @@ def nft_stealer_option(nft_option):
 
     elif nft_option == 2:
         print(f"\n  Starting download of NFT collection {CollectionName} in normal Quality + NFT JSON DATA:\n")
-        for i in tqdm(range(iterations), ascii=True):
+        for i in tqdm(range(iterations)):
             offset = i * 50
             data = json.loads(requests.get(
                 f"https://api.opensea.io/api/v1/assets?order_direction=asc&offset={offset}"
@@ -114,7 +114,7 @@ def nft_stealer_option(nft_option):
 
     elif nft_option == 4:
         print(f"\n  Starting download of NFT collection {CollectionName} in High Quality + NFT JSON DATA:\n")
-        for i in tqdm(range(iterations), ascii=True):
+        for i in tqdm(range(iterations)):
             offset = i * 50
             data = json.loads(requests.get(
                 f"https://api.opensea.io/api/v1/assets?order_direction=asc&offset={offset}"
@@ -124,7 +124,7 @@ def nft_stealer_option(nft_option):
 
     elif nft_option == 5:
         print(f"\n  Starting download of NFT collection {CollectionName} NFT JSON DATA:\n")
-        for i in tqdm(range(iterations), ascii=True):
+        for i in tqdm(range(iterations)):
             offset = i * 50
             data = json.loads(requests.get(
                 f"https://api.opensea.io/api/v1/assets?order_direction=asc&offset={offset}"
@@ -176,7 +176,6 @@ def nft_stealer_images_hq(data):
 
                 # Check if image already exists, if it does, skip saving it
                 if os.path.exists(f'./images/{CollectionName}/{formatted_number}.png'):
-                    print(f"  Image -> [\u2713] (Already Downloaded)")
                     stats["AlreadyDownloadedImages"] += 1
                 else:
                     # Make the request to the URL to get the image
