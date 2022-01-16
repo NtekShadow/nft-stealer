@@ -24,6 +24,11 @@ This way more people can easily let the right-click go brrr without knowledge in
 
 ## Known Issues:
   if choosing to download HQ Images, no images are downloaded at all:
-    -Collection doenst provide HQ Image link
+  
+   -Collection doenst provide HQ Image link
+    
+  Sometimes flagged by AntiVirus for bein a Trojan:
+  
+  -This is due to pyinstaller bundleing into one file. I have submitted the file to Avast and AVG for checking but if its too insecure for you, you can run the python script directly
     
   High possibility of this code breaking if Opensea API changes something with their api
