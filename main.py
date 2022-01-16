@@ -6,7 +6,8 @@ import requests
 import os
 import json
 import math
-from past.builtins import raw_input
+import json
+import requests
 from tqdm import tqdm
 from tabulate import tabulate
 
@@ -64,198 +65,122 @@ if not os.path.exists(f'./images/{CollectionName}'):
     os.mkdir(f'./images/{CollectionName}')
 
 
-# Get total NFT count
+    # Get total NFT count
+    collectioninfo = json.loads(collection.content.decode())
+    priceinfo = json.loads(
+        requests.get(f"https://api.coinbase.com/v2/prices/ETH-USD/spot", headers=header).content.decode())
+    count = int(collectioninfo["collection"]["stats"]["count"])
+    eth_price = float(priceinfo["data"]["amount"])
+    avg_price = float(collectioninfo["collection"]["stats"]["average_price"])
 
-count = int(collectioninfo["collection"]["stats"]["count"])
-eth_price = float(priceinfo["data"]["amount"])
-avg_price = float(collectioninfo["collection"]["stats"]["average_price"])
+    # Opensea limits to 50 assets per API request, so last variable is the highest iteration needed.
+    nft_stealer(option, collection_name, math.ceil(count / 50))
 
-# Opensea limits to 50 assets per API request, so here we do the division and round up.
-iterations = math.ceil(count / 50)
-# Define variables for statistics
+    est_stolen = stats["DownloadedImages"] * avg_price
+    est_stolen_usd = stats["DownloadedImages"] * avg_price * eth_price
 
-stats = {
-    "DownloadedImages": 0,
-    "AlreadyDownloadedImages": 0,
-    "FailedImages": 0,
-    "AlreadyDownloadedData": 0,
-    "DownloadedData": 0,
-}
+    table_end = [[f"""
+
+    Finished downloading collection.
+    Statistics
+    -=-=-=-=-=-
+    Total of {count} units in collection "{collection_name}".
+
+    Money:
+    ----------
+    avg price: {avg_price} ♦
+
+    Estimated stolen->
+    ETH: {est_stolen:.2f} ♦
+    USD: {est_stolen_usd:.2f} $
+
+    Downloads:
+    ----------
+    Images ->
+    successfully downloaded:    {stats["DownloadedImages"]}
+    already downloaded:         {stats["AlreadyDownloadedImages"]}
+
+    Data ->
+    successfully downloaded:    {stats["DownloadedData"]}
+    already downloaded:         {stats["AlreadyDownloadedData"]}  
+
+    You can find the images in the images/{collection_name} folder.
+    You can find the Data in the images/{collection_name}/data folder.
+                               ___            
+      /\  /\__ ___   _____    / __\   _ _ __  
+     / /_/ / _` \ \ / / _ \  / _\| | | | '_ \ 
+    / __  / (_| |\ V /  __/ / /  | |_| | | | |
+    \/ /_/ \__,_| \_/ \___| \/    \__,_|_| |_|
+
+    Press enter to exit..."""]]
+    print(tabulate(table_end, tablefmt='grid'))
+    input()
 
 
-def nft_stealer_option(nft_option):
-    if nft_option == 1:
-        print(f"\n  Starting download of NFT collection {CollectionName} in normal Quality:\n")
-        for i in tqdm(range(iterations)):
-            offset = i * 50
-            data = json.loads(requests.get(
-                f"https://api.opensea.io/api/v1/assets?order_direction=asc&offset={offset}"
-                f"&limit=50&collection={CollectionName}&format=json", headers=headers).content.decode())
-            nft_stealer_images(data)
+def nft_stealer(nft_option, collection_name, iterations):
+    print(f"\n  Downloading collection {collection_name}:\n")
+    for i in tqdm(range(iterations)):
+        data = json.loads(requests.get(
+            f"https://api.opensea.io/api/v1/assets?order_direction=asc&offset={i * 50}"
+            f"&limit=50&collection={collection_name}&format=json", headers=header).content.decode())
 
-    elif nft_option == 3:
-        print(f"\n  Starting download of NFT collection {CollectionName} in High Quality:\n")
-        for i in tqdm(range(iterations)):
-            offset = i * 50
-            data = json.loads(requests.get(
-                f"https://api.opensea.io/api/v1/assets?order_direction=asc&offset={offset}"
-                f"&limit=50&collection={CollectionName}&format=json", headers=headers).content.decode())
-            nft_stealer_images_hq(data)
-
-    elif nft_option == 2:
-        print(f"\n  Starting download of NFT collection {CollectionName} in normal Quality + NFT JSON DATA:\n")
-        for i in tqdm(range(iterations)):
-            offset = i * 50
-            data = json.loads(requests.get(
-                f"https://api.opensea.io/api/v1/assets?order_direction=asc&offset={offset}"
-                f"&limit=50&collection={CollectionName}&format=json", headers=headers).content.decode())
-            nft_stealer_images(data)
-            nft_stealer_data(data)
-
-    elif nft_option == 4:
-        print(f"\n  Starting download of NFT collection {CollectionName} in High Quality + NFT JSON DATA:\n")
-        for i in tqdm(range(iterations)):
-            offset = i * 50
-            data = json.loads(requests.get(
-                f"https://api.opensea.io/api/v1/assets?order_direction=asc&offset={offset}"
-                f"&limit=50&collection={CollectionName}&format=json", headers=headers).content.decode())
-            nft_stealer_images_hq(data)
-            nft_stealer_data(data)
-
-    elif nft_option == 5:
-        print(f"\n  Starting download of NFT collection {CollectionName} NFT JSON DATA:\n")
-        for i in tqdm(range(iterations)):
-            offset = i * 50
-            data = json.loads(requests.get(
-                f"https://api.opensea.io/api/v1/assets?order_direction=asc&offset={offset}"
-                f"&limit=50&collection={CollectionName}&format=json", headers=headers).content.decode())
-            nft_stealer_data(data)
-    else:
-        nft_option = int(input(f"{nft_option} is not a valid option, try again:"))
-        if 0 <= nft_option <= 5:
-            nft_stealer_option(nft_option)
+        if "assets" in data:
+            match nft_option:
+                case "1":
+                    nft_stealer_images(data, collection_name, False)
+                case "2":
+                    nft_stealer_images(data, collection_name, False)
+                    nft_stealer_data(data, collection_name)
+                case "3":
+                    nft_stealer_images(data, collection_name, True)
+                case "4":
+                    nft_stealer_images(data, collection_name, True)
+                    nft_stealer_data(data, collection_name)
+                case "5":
+                    nft_stealer_data(data, collection_name)
+                case _:
+                    print(f"{nft_option} is not a valid option.")
+                    exit()
         else:
-            print(f"{nft_option} is not a valid option, press ENTER to exit:")
-            input()
-            exit()
+            break
 
 
-def nft_stealer_images(data):
-    if not data is None:
-        if "assets" in data:
-            for asset in data["assets"]:
-                formatted_number = f"{int(asset['token_id']):04d}"
-
-                # Check if image already exists, if it does, skip saving it
-                if os.path.exists(f'./images/{CollectionName}/{formatted_number}.png'):
-                    stats["AlreadyDownloadedImages"] += 1
+def nft_stealer_images(data, collection_name, hq):
+    for asset in data["assets"]:
+        formatted_number = f"{int(asset['token_id']):04d}"
+        if os.path.exists(f'./images/{collection_name}/{formatted_number}.png'):
+            stats["AlreadyDownloadedImages"] += 1
+        else:
+            if hq and asset["image_original_url"]:
+                image = requests.get(asset["image_original_url"])
+            else:
+                if asset["image_url"]:
+                    image = requests.get(asset["image_url"])
                 else:
-                    # Make the request to the URL to get the image
-                    if not asset["image_url"] is None:
-                        image = requests.get(asset["image_url"])
-                    else:
-                        continue
-
-                    # If the URL returns status code "200 Successful", save the image into the "images" folder.
-                    if image.status_code == 200:
-                        file = open(f"./images/{CollectionName}/{formatted_number}.png", "wb+")
-                        file.write(image.content)
-                        file.close()
-                        stats["DownloadedImages"] += 1
-                    # If the URL returns a status code other than "200 Successful", alert the user and don't save the
-                    # image
-                    else:
-                        continue
+                    continue
+            if image.status_code == 200:
+                file = open(f"./images/{collection_name}/{formatted_number}.png", "wb+")
+                file.write(image.content)
+                file.close()
+                stats["DownloadedImages"] += 1
+            else:
+                image.raise_for_status()
+                continue
 
 
-def nft_stealer_images_hq(data):
-    if not data is None:
-        if "assets" in data:
-            for asset in data["assets"]:
-                formatted_number = f"{int(asset['token_id']):04d}"
-
-                # Check if image already exists, if it does, skip saving it
-                if os.path.exists(f'./images/{CollectionName}/{formatted_number}.png'):
-                    stats["AlreadyDownloadedImages"] += 1
-                else:
-                    # Make the request to the URL to get the image
-                    if not asset["image_original_url"] == None:
-                        image = requests.get(asset["image_original_url"])
-                    else:
-                        if not asset["image_url"] == None:
-                            image = requests.get(asset["image_url"])
-                        else:
-                            continue
-                        # If the URL returns status code "200 Successful", save the image into the "images" folder.
-                        if image.status_code == 200:
-                            file = open(f"./images/{CollectionName}/{formatted_number}.png", "wb+")
-                            file.write(image.content)
-                            file.close()
-                            stats["DownloadedImages"] += 1
-                        # If the URL returns a status code other than "200 Successful", alert the user and don't save
-                        # the image
-                        else:
-                            continue
+def nft_stealer_data(data, collection_name):
+    if not os.path.exists(f'./images/{collection_name}/data'):
+        os.mkdir(f'./images/{collection_name}/data')
+    for asset in data["assets"]:
+        formatted_number = f"{int(asset['token_id']):04d}"
+        if os.path.exists(f'./images/{collection_name}/data/{formatted_number}.json'):
+            stats["AlreadyDownloadedData"] += 1
+        else:
+            file = open(f"./images/{collection_name}/data/{formatted_number}.json", "w+")
+            json.dump(asset, file, indent=3)
+            file.close()
+            stats["DownloadedData"] += 1
 
 
-def nft_stealer_data(data):
-    if not os.path.exists(f'./images/{CollectionName}/image_data'):
-        os.mkdir(f'./images/{CollectionName}/image_data')
-    if not data is None:
-        if "assets" in data:
-            for asset in data["assets"]:
-                formatted_number = f"{int(asset['token_id']):04d}"
-
-                if os.path.exists(f'./images/{CollectionName}/image_data/{formatted_number}.json'):
-                    stats["AlreadyDownloadedData"] += 1
-                else:
-                    # Take the JSON from the URL, and dump it to the respective file.
-                    file = open(f"./images/{CollectionName}/image_data/{formatted_number}.json", "w+")
-                    json.dump(asset, file, indent=3)
-                    file.close()
-                    stats["DownloadedData"] += 1
-
-nft_stealer_option(option)
-
-estm_stolen = stats["DownloadedImages"] * avg_price
-estm_stolen_usd = estm_stolen * eth_price
-
-textEnd = f"""
-
-Finished downloading collection.
-Statistics
--=-=-=-=-=-
-Total of {count} units in collection "{CollectionName}".
-
-Money:
-----------
-avg price: {avg_price} ♦
-
-Estimated stolen->
-ETH: {estm_stolen:.2f} ♦
-USD: {estm_stolen_usd:.2f} $
-
-Downloads:
-----------
-Images ->
-successfully downloaded:    {stats["DownloadedImages"]}
-already downloaded:         {stats["AlreadyDownloadedImages"]}
-
-Data ->
-successfully downloaded:    {stats["DownloadedData"]}
-already downloaded:         {stats["AlreadyDownloadedData"]}  
-    
-You can find the images in the images/{CollectionName} folder.
-You can find the Data in the images/{CollectionName}/data folder.
-                           ___            
-  /\  /\__ ___   _____    / __\   _ _ __  
- / /_/ / _` \ \ / / _ \  / _\| | | | '_ \ 
-/ __  / (_| |\ V /  __/ / /  | |_| | | | |
-\/ /_/ \__,_| \_/ \___| \/    \__,_|_| |_|
-
-Press enter to exit..."""
-tableEnd = [[textEnd]]
-output = tabulate(tableEnd, tablefmt='grid')
-print(output)
-raw_input()
-
+if __name__ == '__main__':
+    run_nft_stealer()
