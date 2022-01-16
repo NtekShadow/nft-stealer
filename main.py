@@ -6,7 +6,6 @@ import requests
 import os
 import json
 import math
-
 from past.builtins import raw_input
 from tqdm import tqdm
 from tabulate import tabulate
