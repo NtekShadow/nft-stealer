@@ -2,9 +2,7 @@
 # Made by NtekShadow
 # NFT Stealer (OpenSea)
 
-import requests
 import os
-import json
 import math
 import json
 import requests
@@ -12,58 +10,56 @@ from tqdm import tqdm
 from tabulate import tabulate
 
 
-textStart = r""" made by NtekShadow
-
-         __ _         _             _           
-        / _| |       | |           | |          
-  _ __ | |_| |_   ___| |_ ___  __ _| | ___ _ __ 
- | '_ \|  _| __| / __| __/ _ \/ _` | |/ _ \ '__|
- | | | | | | |_  \__ \ ||  __/ (_| | |  __/ |   
- |_| |_|_|  \__| |___/\__\___|\__,_|_|\___|_|  
-     
-     
- Please choose an option:
-     
- [1]: Download standard quality NFT 
- [2]: Download standard quality NFT + NFT JSON Data
- [3]: Download high quality NFT                 
- [4]: Download high quality NFT + NFT JSON Data 
- [5]: Download only NFT JSON Data
-
-(not all nft's include a hq image so [3] and [4] could fail)
-"""
-tableStart = [[textStart]]
-output = tabulate(tableStart, tablefmt='grid')
-
-print(output)
-option = int(input("  Enter Option Number: "))
-CollectionName = input("  Input NFT collection Name: ").lower()
-# Get information regarding collection
-headers = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36'
+header = {
+    'User-Agent': 'Mozilla/5.0 (X11; Arch; Linux x86_64; rv:15.0) Gecko/20100101 Firefox/15.0.1'
 }
-collection = requests.get(f"https://api.opensea.io/api/v1/collection/{CollectionName}?format=json")
-price = requests.get(f"https://api.coinbase.com/v2/prices/ETH-USD/spot", headers=headers)
 
-if collection.status_code == 429:
-    print("Server returned HTTP 429. Request was throttled. Please try again in about 5 minutes.")
+stats = {
+    "DownloadedImages": 0,
+    "AlreadyDownloadedImages": 0,
+    "DownloadedData": 0,
+    "AlreadyDownloadedData": 0
+}
 
-if collection.status_code == 404:
-    print("NFT Collection not found.\nPress ENTER to exit")
-    input()
-    exit()
 
-collectioninfo = json.loads(collection.content.decode())
-priceinfo = json.loads(price.content.decode())
+def run_nft_stealer():
+    table_start = [[r""" made by NtekShadow
 
-# Create image folder if it doesn't exist.
+             __ _         _             _           
+            / _| |       | |           | |          
+      _ __ | |_| |_   ___| |_ ___  __ _| | ___ _ __ 
+     | '_ \|  _| __| / __| __/ _ \/ _` | |/ _ \ '__|
+     | | | | | | |_  \__ \ ||  __/ (_| | |  __/ |   
+     |_| |_|_|  \__| |___/\__\___|\__,_|_|\___|_|  
 
-if not os.path.exists('./images'):
-    os.mkdir('./images')
 
-if not os.path.exists(f'./images/{CollectionName}'):
-    os.mkdir(f'./images/{CollectionName}')
+     Please choose an option:
 
+     [1]: Download standard quality NFT 
+     [2]: Download standard quality NFT + NFT JSON Data
+     [3]: Download high quality NFT                 
+     [4]: Download high quality NFT + NFT JSON Data 
+     [5]: Download only NFT JSON Data
+
+    (not all nft's include a hq image so [3] and [4] could fail)
+    """]]
+
+    print(tabulate(table_start, tablefmt='grid'))
+
+    option = input("  Enter Option Number: ")
+    collection_name = input("  Input NFT collection Name: ").lower()
+    collection = requests.get(f"https://api.opensea.io/api/v1/collection/{collection_name}?format=json", headers=header)
+
+    if not collection.status_code == 200:
+        collection.raise_for_status()
+        exit()
+
+    # Create folders if it doesn't exist.
+    if not os.path.exists('./images'):
+        os.mkdir('./images')
+
+    if not os.path.exists(f'./images/{collection_name}'):
+        os.mkdir(f'./images/{collection_name}')
 
     # Get total NFT count
     collectioninfo = json.loads(collection.content.decode())
