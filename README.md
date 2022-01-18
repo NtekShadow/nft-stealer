@@ -26,7 +26,7 @@ And by using the coinbase api getting the current price of ETH in USD for a litt
   
   -This is due to pyinstaller compressing into one file. I have submitted the file to Avast and AVG for checking. Once they agree that it doesn't contain a trojan, try updating the virus definitions in your antivirus software and that should stop the false positive. if it's too insecure for you, you can run the python script directly.
 
-You can see what antivirus currently show a false positive with this link and also reanalyze the file:
+You can see which antivirus currently shows a false positive and also reanalyze the file with this link:
 https://www.virustotal.com/gui/file/5de685b136a419eb60eba032f40ac69ff661e19cfc886294fabcc3aa0d20a294
     
   High possibility of this code breaking if Opensea API changes something with their api
