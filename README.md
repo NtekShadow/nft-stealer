@@ -24,6 +24,6 @@ And by using the coinbase api getting the current price of ETH in USD for a litt
     
   Sometimes flagged by AntiVirus for bein a Trojan:
   
-  -This is due to pyinstaller bundling into one file. I have submitted the file to Avast and AVG for checking. Once they agree that it doesn't contain a trojan, try updating the virus definitions in your antivirus software and that should stop the false positive. if it's too insecure for you, you can run the python script directly
+  -This is due to pyinstaller bundling into one file. I have submitted the file to Avast and AVG for checking. Once they agree that it doesn't contain a trojan, try updating the     virus definitions in your antivirus software and that should stop the false positive. if it's too insecure for you, you can run the python script directly.
     
   High possibility of this code breaking if Opensea API changes something with their api
