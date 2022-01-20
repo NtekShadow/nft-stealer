@@ -18,6 +18,7 @@ after entering both of these valid just wait until the program finishes the down
 By using the Open sea API, setting a User-Agent and fetching the items in bunches of 50 and iterating through the bunches until all items are downloaded.
 And by using the coinbase API getting the current price of ETH in USD for a little fun statistics. (which is probably not accurate at all)
 
+## Please refer to the Opensea API status page first if you're experiencing problems: https://status.opensea.io/
 ## Known Issues:
   if choosing to download HQ Images, no images are downloaded at all:
   
