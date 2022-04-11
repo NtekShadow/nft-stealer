@@ -1,6 +1,8 @@
 # NFT Stealer
 This executable lets you download all collections from https://opensea.io.
 
+# Currently not kept up to date, feel free to fork or work on it yourself!
+
 ## Usage
 Download the Archive and extract the nft-stealer.exe (you can get it from releases: https://github.com/NtekShadow/nft-stealer/releases)
 Once extracted you can run the executable.
